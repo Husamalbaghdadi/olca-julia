@@ -1,0 +1,9 @@
+target/
+libs/
+
+# IDE files
+.idea/
+*.iml
+.settings/
+.classpath
+.project
