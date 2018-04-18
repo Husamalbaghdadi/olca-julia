@@ -1,16 +1,20 @@
 #include <stdio.h>
 #include <jni.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // from https://github.com/PetterS/SuiteSparse/blob/master/UMFPACK/Include/umfpack.h
 #define UMFPACK_A	(0) /* Ax=b    */
 
 extern int umfpack_di_symbolic
 (
-    int n_row,
-    int n_col,
-    const int Ap [],
-    const int Ai [],
-    const double Ax [],
+    jint n_row,
+    jint n_col,
+    jint *Ap,
+    jint *Ai,
+    jdouble *Ax,
     void **Symbolic,
     double *Control,
     double *Info
@@ -18,9 +22,9 @@ extern int umfpack_di_symbolic
 
 extern int umfpack_di_numeric
 (
-    const int Ap [],
-    const int Ai [],
-    const double Ax [],
+    jint *Ap,
+    jint *Ai,
+    jdouble *Ax,
     void *Symbolic,
     void **Numeric,
     double *Control,
@@ -30,11 +34,11 @@ extern int umfpack_di_numeric
 int umfpack_di_solve
 (
     int sys,
-    const int Ap [],
-    const int Ai [],
-    const double Ax [],
-    double X [],
-    const double B [],
+    jint *Ap,
+    jint *Ai,
+    jdouble *Ax,
+    jdouble *X,
+    jdouble *B,
     void *Numeric,
      double *Control,
     double *Info
@@ -75,3 +79,7 @@ extern void umfpack_di_free_numeric(void **Numeric);
         env->ReleaseDoubleArrayElements(demand, demandPtr, 0);
         env->ReleaseDoubleArrayElements(result, resultPtr, 0);
 }
+
+#ifdef __cplusplus
+}
+#endif

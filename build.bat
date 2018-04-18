@@ -1,18 +1,10 @@
 @echo off
 
-echo delete old app
-if exist .\libs\app.exe (
-    del .\libs\app.exe
-)
+set JNI_FLAGS=-D_JNI_IMPLEMENTATION_ -Wl,--kill-at
+set JNI="-IC:\Program Files\Java\jdk1.8.0_131\include" "-IC:\Program Files\Java\jdk1.8.0_131\include\win32"
 
 echo compile it
-gcc -o app.exe -L.\libs test.c -lumfpack
-
-if exist app.exe (
-    move app.exe .\libs
-
-    echo test app
-    .\libs\app.exe
-)
+g++ %JNI_FLAGS% -O3 -DNDEBUG %JNI% -L.\libs -shared -o libs\olca-umfpack.dll lib.c -lumfpack
 
 echo all done
+
