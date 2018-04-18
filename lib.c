@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <jni.h>
 
 // from https://github.com/PetterS/SuiteSparse/blob/master/UMFPACK/Include/umfpack.h
 #define UMFPACK_A	(0) /* Ax=b    */
@@ -44,31 +45,33 @@ extern void umfpack_di_free_symbolic(void **Symbolic);
 extern void umfpack_di_free_numeric(void **Numeric);
 
 
-int main() {
-    printf("umfpack_di_symbolic!\n");
+ JNIEXPORT void JNICALL Java_org_openlca_umfpack_Umfpack_solve(
+            JNIEnv *env, jclass jclazz, 
+            jint n,
+            jintArray columnPointers,
+            jintArray rowIndices,
+            jdoubleArray values,
+            jdoubleArray demand,
+            jdoubleArray result) {
 
+        jint *columnPointersPtr = env->GetIntArrayElements(columnPointers, NULL);
+        jint *rowIndicesPtr = env->GetIntArrayElements(rowIndices, NULL);
+        jdouble *valuesPtr = env->GetDoubleArrayElements(values, NULL);
+        jdouble *demandPtr = env->GetDoubleArrayElements(demand, NULL);
+        jdouble *resultPtr = env->GetDoubleArrayElements(result, NULL);
 
-    int n = 5;
-    int Ap [ ] = {0, 2, 5, 9, 10, 12};
-    int Ai [ ] = { 0, 1, 0, 2, 4, 1, 2, 3, 4, 2, 1, 4};
-    double Ax [ ] = {2., 3., 3., -1., 4., 4., -3., 1., 2., 2., 6., 1.};
-    double b [ ] = {8., 45., -3., 3., 19.};
-    double x [5];
+        double *null = (double *) NULL;
+        void *Symbolic, *Numeric;
 
+        umfpack_di_symbolic(n, n, columnPointersPtr, rowIndicesPtr, valuesPtr, &Symbolic, null, null) ;
+        umfpack_di_numeric (columnPointersPtr, rowIndicesPtr, valuesPtr, Symbolic, &Numeric, null, null) ;
+        umfpack_di_free_symbolic (&Symbolic) ;
+        umfpack_di_solve (UMFPACK_A, columnPointersPtr, rowIndicesPtr, valuesPtr, resultPtr, demandPtr, Numeric, null, null) ;
+        umfpack_di_free_numeric (&Numeric) ;
 
-    double *null = (double *) NULL;
-    void *Symbolic, *Numeric;
-
-    printf("umfpack_di_symbolic!\n");
-
-    umfpack_di_symbolic(n, n, Ap, Ai, Ax, &Symbolic, null, null) ;
-    umfpack_di_numeric (Ap, Ai, Ax, Symbolic, &Numeric, null, null) ;
-    umfpack_di_free_symbolic (&Symbolic) ;
-    umfpack_di_solve (UMFPACK_A, Ap, Ai, Ax, x, b, Numeric, null, null) ;
-    umfpack_di_free_numeric (&Numeric) ;
-
-for (int i = 0 ; i < n ; i++) printf ("x [%d] = %g\n", i, x [i]) ;
-
-    printf("Works!\n");
-    return 0;
+        env->ReleaseIntArrayElements(columnPointers, columnPointersPtr, 0);
+        env->ReleaseIntArrayElements(rowIndices, rowIndicesPtr, 0);
+        env->ReleaseDoubleArrayElements(values, valuesPtr, 0);
+        env->ReleaseDoubleArrayElements(demand, demandPtr, 0);
+        env->ReleaseDoubleArrayElements(result, resultPtr, 0);
 }
