@@ -5,6 +5,7 @@ import static org.junit.Assert.assertArrayEquals;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openlca.core.matrix.format.HashMatrix;
+import org.openlca.umfpack.UmfFactorizedMatrix;
 import org.openlca.umfpack.UmfMatrix;
 import org.openlca.umfpack.Umfpack;
 
@@ -42,4 +43,25 @@ public class UmfpackTest {
         assertArrayEquals(
             new double[] {1d, 2d, 3d, 4d, 5d }, x, 1e-8);
     }
+
+    @Test
+    public void testFactorizeMatrix() {
+        HashMatrix m = new HashMatrix(new double[][] { 
+            { 2.0, 3.0, 0.0, 0.0, 0.0 },
+            { 3.0, 0.0, 4.0, 0.0, 6.0 },
+            { 0.0, -1.0, -3.0, 2.0, 0.0 },
+            { 0.0, 0.0, 1.0, 0.0, 0.0 },
+            { 0.0, 4.0, 2.0, 0.0, 1.0 } });
+        UmfMatrix uMatrix = UmfMatrix.from(m);
+        UmfFactorizedMatrix factorizedM = Umfpack.factorize(uMatrix);
+        
+        double[] demand = { 8., 45., -3., 3., 19. };
+        double[] x = Umfpack.solve(factorizedM, demand);
+        assertArrayEquals(
+            new double[] {1d, 2d, 3d, 4d, 5d }, x, 1e-8);
+        /*
+        factorizedM.dispose();
+        */
+    }
+
 }
