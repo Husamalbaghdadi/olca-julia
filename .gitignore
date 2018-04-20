@@ -1,6 +1,9 @@
 target/
 libs/
 
+# JVM crashes :)
+hs_err_pid*.log
+
 # IDE files
 .idea/
 *.iml

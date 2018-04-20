@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <jni.h>
+#include <stdio.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -94,14 +95,15 @@ struct FactorizedMatrix {
     void *Numeric;
 };
 
-JNIEXPORT void JNICALL Java_org_openlca_umfpack_Umfpack_factorize(
+JNIEXPORT jlong JNICALL Java_org_openlca_umfpack_Umfpack_factorize(
             JNIEnv *env, jclass jclazz, 
             jint n,
             jintArray columnPointers,
             jintArray rowIndices,
             jdoubleArray values) {
 
-        struct FactorizedMatrix* fm = (FactorizedMatrix*)malloc(sizeof(struct FactorizedMatrix));
+        FactorizedMatrix* fm = (FactorizedMatrix*) malloc(sizeof(struct FactorizedMatrix));
+        printf("factorized: %p\n", fm);
         fm->columnPointers = &columnPointers;
         fm->columnPointersPtr = env->GetIntArrayElements(columnPointers, NULL);
 
@@ -133,6 +135,8 @@ JNIEXPORT void JNICALL Java_org_openlca_umfpack_Umfpack_factorize(
         umfpack_di_free_symbolic(&Symbolic);
 
         fm->Numeric = Numeric;
+
+        return (jlong) fm;
 }
 
 JNIEXPORT void JNICALL Java_org_openlca_umfpack_Umfpack_solveFactorized(
@@ -142,7 +146,9 @@ JNIEXPORT void JNICALL Java_org_openlca_umfpack_Umfpack_solveFactorized(
     jdouble *demandPtr = env->GetDoubleArrayElements(demand, NULL);
     jdouble *resultPtr = env->GetDoubleArrayElements(result, NULL);
 
-    struct FactorizedMatrix* fm = (FactorizedMatrix*) pointer;
+    FactorizedMatrix* fm = (FactorizedMatrix*) pointer;
+    printf("solve factorized: %p\n", fm);
+
 
     double *null = (double *) NULL;
     umfpack_di_solve(
@@ -162,7 +168,8 @@ JNIEXPORT void JNICALL Java_org_openlca_umfpack_Umfpack_solveFactorized(
 
 JNIEXPORT void JNICALL Java_org_openlca_umfpack_Umfpack_dispose(
             JNIEnv *env, jclass jclazz, jlong pointer) {
-    struct FactorizedMatrix* fm = (FactorizedMatrix*) pointer;
+    FactorizedMatrix* fm = (FactorizedMatrix*) pointer;
+    printf("dispose factorized: %p\n", fm);
     env->ReleaseIntArrayElements(*(fm->columnPointers), fm->columnPointersPtr, 0);
     env->ReleaseIntArrayElements(*(fm->rowIndices), fm->rowIndicesPtr, 0);
     env->ReleaseDoubleArrayElements(*(fm->values), fm->valuesPtr, 0);
