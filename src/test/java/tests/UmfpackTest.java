@@ -59,7 +59,7 @@ public class UmfpackTest {
         double[] x = Umfpack.solve(factorizedM, demand);
         assertArrayEquals(
             new double[] {1d, 2d, 3d, 4d, 5d }, x, 1e-8);
-        //factorizedM.dispose();
+        //factorizedM.dispose(); -> TODO: this currently leads to a crash of the JVM
     }
 
 }
