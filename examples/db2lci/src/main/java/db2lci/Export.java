@@ -53,7 +53,7 @@ class Export {
 		Process p = init(provider);
 		addRefFlow(provider, p);
 		addResults(result, p);
-		log.info("Export LCI result process {}", p);
+		log.info("Export LCI result process: {}", p.getName());
 		export.write(p, (message, data) -> {
 			if (message.error != null) {
 				log.error("Export failed: " + message.text, message.error);

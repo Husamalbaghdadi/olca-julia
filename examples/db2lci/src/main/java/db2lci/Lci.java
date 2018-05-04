@@ -43,8 +43,6 @@ class Lci {
 			log.info("Calculate LCI and LCIA results for i={}", i);
 			r.totalFlowResults = solver.multiply(inventory.interventionMatrix, s);
 			fn.accept(provider, r);
-			break; // TODO
 		}
 	}
-
 }

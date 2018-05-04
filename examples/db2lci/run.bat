@@ -1,2 +1,2 @@
 @echo off
-java -cp "db2lci.jar;java\*" db2lci.App %1
+java -Xmx4g -cp "db2lci.jar;java\*" db2lci.App %1
