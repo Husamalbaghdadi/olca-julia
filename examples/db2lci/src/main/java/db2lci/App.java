@@ -4,6 +4,8 @@ import java.io.File;
 
 import org.openlca.core.database.IDatabase;
 import org.openlca.core.database.derby.DerbyDatabase;
+import org.openlca.core.matrix.InventoryMatrix;
+import org.openlca.core.matrix.solvers.DenseSolver;
 import org.openlca.eigen.NativeLibrary;
 import org.openlca.umfpack.Umfpack;
 import org.slf4j.Logger;
@@ -36,6 +38,10 @@ public class App {
 			DenseSolver solver = new DenseSolver();
 			DbMatrix dbMatrix = new DbMatrix(db, solver);
 			InventoryMatrix inventory = dbMatrix.getInventory();
+
+			Export export = new Export(db);
+			Lci.each(inventory, export::next);
+			export.finish();
 
 			// db.close(); -> TODO throws an exception ?!?
 			log.info("All done");
