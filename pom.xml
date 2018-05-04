@@ -8,7 +8,7 @@
     </properties>
 
     <groupId>org.openlca</groupId>    
-    <artifactId>olca-umfpack</artifactId>
+    <artifactId>olca-julia</artifactId>
 	<version>0.0.1</version>
 
     <dependencies>
