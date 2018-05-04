@@ -4,6 +4,8 @@ import java.io.File;
 
 import org.openlca.core.database.IDatabase;
 import org.openlca.core.database.derby.DerbyDatabase;
+import org.openlca.eigen.NativeLibrary;
+import org.openlca.umfpack.Umfpack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,10 +24,20 @@ public class App {
 
 	public void run() {
 		try {
+			log.info("Connect to database");
 			IDatabase db = getDb();
 			if (db == null)
 				return;
-			db.close();
+			log.info("Load native libraries");
+			NativeLibrary.loadFromDir(new File("."));
+			Umfpack.load("julia/olca-umfpack.dll");
+
+			log.info("Build the inventory matrix");
+			DenseSolver solver = new DenseSolver();
+			DbMatrix dbMatrix = new DbMatrix(db, solver);
+			InventoryMatrix inventory = dbMatrix.getInventory();
+
+			// db.close(); -> TODO throws an exception ?!?
 			log.info("All done");
 		} catch (Exception e) {
 			log.error("Unexpected exception", e);
