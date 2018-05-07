@@ -16,7 +16,7 @@ public class Umfpack {
 
     public static double[] solve(UmfMatrix m, double[] demand) {
         double[] result = new double[demand.length];
-        solve(m.rowCount, 
+        solve(m.rowCount,
             m.columnPointers,
             m.rowIndices,
             m.values,
@@ -34,7 +34,7 @@ public class Umfpack {
 
     public static UmfFactorizedMatrix factorize(UmfMatrix m) {
         long pointer = factorize(
-            m.rowCount, 
+            m.rowCount,
             m.columnPointers,
             m.rowIndices,
             m.values);
@@ -45,22 +45,27 @@ public class Umfpack {
 
     public static native long solveFactorized(
         long pointer, double[] demand, double[] result);
-    
+
     public static double[] solve(UmfFactorizedMatrix m, double[] demand) {
         double[] result = new double[demand.length];
         solveFactorized(m.pointer, demand, result);
         return result;
     }
-    
+
     /**
-     * Loads the native library from the given path. Does nothing when the
-     * library was already loaded.
+     * Loads the native libraries from the given directory path. Does nothing
+	 * when the libraries were already loaded.
      */
-    public static void load(String pathToLib) {
+    public static void loadLibs(String pathToLib) {
         if (loaded)
             return;
-        File f = new File(pathToLib);
-        System.load(f.getAbsolutePath());
+		File dir = new File(pathToLib);
+		for (File f : dir.listFiles()) {
+			// TODO: platform specific library files...
+			if (f.getName().endsWith(".dll")) {
+				System.load(f.getAbsolutePath());
+			}
+		}
         // TODO: test it
         loaded = true;
     }

@@ -13,14 +13,14 @@ public class UmfpackTest {
 
     @BeforeClass
     public static void setUp() {
-        Umfpack.load("libs/olca-umfpack.dll");
+        Umfpack.loadLibs("libs");
     }
 
     @Test
     public void testSolveNative() {
         double[] x = new double[5];
-        Umfpack.solve(5, 
-            new int[] { 0, 2, 5, 9, 10, 12 }, 
+        Umfpack.solve(5,
+            new int[] { 0, 2, 5, 9, 10, 12 },
             new int[] { 0, 1, 0, 2, 4, 1, 2, 3, 4, 2, 1, 4 },
             new double[] { 2., 3., 3., -1., 4., 4., -3., 1., 2., 2., 6., 1. },
             new double[] { 8., 45., -3., 3., 19. },
@@ -31,7 +31,7 @@ public class UmfpackTest {
 
     @Test
     public void testSolveMatrix() {
-        HashMatrix m = new HashMatrix(new double[][] { 
+        HashMatrix m = new HashMatrix(new double[][] {
             { 2.0, 3.0, 0.0, 0.0, 0.0 },
             { 3.0, 0.0, 4.0, 0.0, 6.0 },
             { 0.0, -1.0, -3.0, 2.0, 0.0 },
@@ -46,7 +46,7 @@ public class UmfpackTest {
 
     @Test
     public void testFactorizeMatrix() {
-        HashMatrix m = new HashMatrix(new double[][] { 
+        HashMatrix m = new HashMatrix(new double[][] {
             { 2.0, 3.0, 0.0, 0.0, 0.0 },
             { 3.0, 0.0, 4.0, 0.0, 6.0 },
             { 0.0, -1.0, -3.0, 2.0, 0.0 },
@@ -54,7 +54,7 @@ public class UmfpackTest {
             { 0.0, 4.0, 2.0, 0.0, 1.0 } });
         UmfMatrix uMatrix = UmfMatrix.from(m);
         UmfFactorizedMatrix factorizedM = Umfpack.factorize(uMatrix);
-        
+
         double[] demand = { 8., 45., -3., 3., 19. };
         double[] x = Umfpack.solve(factorizedM, demand);
         assertArrayEquals(

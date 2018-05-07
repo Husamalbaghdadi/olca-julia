@@ -24,8 +24,8 @@ platforms are currently not tested) and requires [MinGW](http://www.mingw.org/)
 to be installed. Here is a Java example for using it:
 
 ```java
-// load the JNI wrapper
-Umfpack.load("path/to/olca-umfpack.dll");
+// load native libraries and JNI wrapper from the given folder
+Umfpack.loadLibs("path/to/library/folder");
 
 // factorize a technology matrix
 UmfMatrix m = UmfMatrix.from(inventory.technologyMatrix);

@@ -32,7 +32,7 @@ public class App {
 				return;
 			log.info("Load native libraries");
 			NativeLibrary.loadFromDir(new File("."));
-			Umfpack.load("julia/olca-umfpack.dll");
+			Umfpack.loadLibs("julia");
 
 			log.info("Build the inventory matrix");
 			DenseSolver solver = new DenseSolver();
